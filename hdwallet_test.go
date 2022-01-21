@@ -333,3 +333,27 @@ func TestWallet(t *testing.T) {
 		t.Error("expected 12 words")
 	}
 }
+
+func TestWalletWithSmallMnemonic(t *testing.T) {
+	mnemonic := "small earth ridge"
+	wallet, err := NewFromMnemonic(mnemonic)
+	if err != nil {
+		t.Error(err)
+	}
+	// Check that Wallet implements the accounts.Wallet interface.
+	var _ accounts.Wallet = wallet
+
+	path, err := ParseDerivationPath("m/44'/60'/0'/0/0")
+	if err != nil {
+		t.Error(err)
+	}
+
+	account, err := wallet.Derive(path, false)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if account.Address.Hex() != "0xA0a8101F1E58267f25105873f933f2240a10A565" {
+		t.Error("wrong address")
+	}
+}
